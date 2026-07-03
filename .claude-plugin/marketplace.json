@@ -1,0 +1,20 @@
+{
+  "name": "doc-knowledge-router",
+  "description": "Documentation routing skill library for Claude Code and compatible agents",
+  "owner": {
+    "name": "doc-knowledge-router contributors",
+    "email": ""
+  },
+  "plugins": [
+    {
+      "name": "doc-knowledge-router",
+      "description": "Agent skill for routing project documentation, indexes, archives, and source-of-truth locations",
+      "version": "1.0.0",
+      "source": "./",
+      "author": {
+        "name": "doc-knowledge-router contributors",
+        "email": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "doc-knowledge-router",
+  "description": "Agent skill for routing project documentation, indexes, archives, and source-of-truth locations",
+  "version": "1.0.0",
+  "author": {
+    "name": "doc-knowledge-router contributors",
+    "email": ""
+  },
+  "homepage": "https://github.com/hxg2050/doc-knowledge-router",
+  "repository": "https://github.com/hxg2050/doc-knowledge-router",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "documentation",
+    "knowledge-management",
+    "codex",
+    "claude-code"
+  ]
+}

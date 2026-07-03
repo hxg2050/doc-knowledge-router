@@ -1,4 +1,4 @@
 interface:
   display_name: "文档图书馆管理员"
-  short_description: "只管理文档位置和查找路径"
+  short_description: "管理项目文档入口、分类、查找路径、归档位置和权威归属"
   default_prompt: "使用 $doc-knowledge-router 帮我判断这些项目文档应该放在哪里、怎么分类、从哪里查找。"
