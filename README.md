@@ -10,10 +10,11 @@
 npx skills add https://github.com/hxg2050/doc-knowledge-router
 ```
 
-只安装本 skill：
+只安装指定 skill：
 
 ```bash
 npx skills add https://github.com/hxg2050/doc-knowledge-router --skill "doc-knowledge-router"
+npx skills add https://github.com/hxg2050/doc-knowledge-router --skill "change-workflow"
 ```
 
 也可以手动复制：
@@ -28,6 +29,7 @@ cp -R skills/doc-knowledge-router ~/.codex/skills/
 | Folder | Install name | Description | Status |
 | --- | --- | --- | --- |
 | `doc-knowledge-router` | `doc-knowledge-router` | 管理项目文档的位置、分类、入口、索引、查找路径和权威归属 | stable |
+| `change-workflow` | `change-workflow` | 执行仓库变更时保持计划、测试、验证、续作记录和提交边界 | draft |
 
 ## Usage
 
@@ -43,12 +45,22 @@ Use $doc-knowledge-router to organize the docs directory and create a clear docs
 使用 $doc-knowledge-router 整理 docs 目录，建立总入口、工作流入口和归档规则。
 ```
 
-更多示例见 [examples/doc-knowledge-router.md](examples/doc-knowledge-router.md)。
+变更工作流示例：
+
+```text
+使用 $change-workflow 修复这个 bug，先补复现测试，再实现并运行相关验证。
+```
+
+更多示例见 [examples/doc-knowledge-router.md](examples/doc-knowledge-router.md) 和 [examples/change-workflow.md](examples/change-workflow.md)。
 
 ## Repository Layout
 
 ```text
 skills/
+  change-workflow/
+    SKILL.md
+    agents/openai.yaml
+    references/plan-template.md
   doc-knowledge-router/
     SKILL.md
     agents/openai.yaml
