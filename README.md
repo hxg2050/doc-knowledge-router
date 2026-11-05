@@ -32,7 +32,7 @@ cp -R skills/doc-knowledge-router ~/.codex/skills/
 | Folder | Install name | Description | Status |
 | --- | --- | --- | --- |
 | `doc-knowledge-router` | `doc-knowledge-router` | 管理项目文档的位置、分类、入口、索引、查找路径和权威归属 | stable |
-| `change-workflow` | `change-workflow` | 执行仓库变更时保持计划、测试、验证、续作记录和提交边界 | draft |
+| `change-workflow` | `change-workflow` | 按风险推进变更，选择合适的计划与验证，保护已有工作和续作上下文 | draft |
 | `roguelike-design-advisor` | `roguelike-design-advisor` | 参考 48 个机制与 24 个技能草案，提供游戏设计方向、组合建议与触发方式变体 | draft |
 
 ## Usage

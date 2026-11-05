@@ -1,4 +1,4 @@
 interface:
   display_name: "变更工作流"
-  short_description: "执行仓库变更时保持计划、测试、验证、续作记录和提交边界"
-  default_prompt: "使用 $change-workflow 帮我完成这次仓库变更，从读取上下文、制定计划、实现到验证和续作记录。"
+  short_description: "按风险推进仓库变更，选择合适的计划与验证，并保护已有工作和续作上下文"
+  default_prompt: "使用 $change-workflow 完成这次仓库变更，按实际风险安排计划和验证，保留已有改动，需要交接时记录下一步。"
