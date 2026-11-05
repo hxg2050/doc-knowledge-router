@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>游戏界面素材对照</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="top"><div><p class="eyebrow">GAME UI · ASSET REVIEW</p><h1>游戏界面素材对照</h1></div><span id="phase" class="badge">正在读取</span></header>
+  <main>
+    <p id="summary" role="status">加载素材清单…</p>
+    <p class="hint">此页从独立 PNG 实时拼装，显示生成时的素材检查状态；严格视觉验收仅在请求后执行。修改素材后请重新生成预览。</p>
+    <nav aria-label="页面导航"><a href="#compare">预览对照</a><a href="#assets">独立素材</a><a href="#rounds">生成记录</a></nav>
+    <section id="compare" aria-labelledby="compare-title">
+      <h2 id="compare-title">预览对照</h2>
+      <div class="toolbar">
+        <label>模式 <select id="mode"><option value="swipe">拖动对比</option><option value="side">左右并排</option><option value="assembly">拼装结果</option><option value="reference">效果原图</option><option value="overlay">透明叠图</option><option value="difference">差异 ×4</option></select></label>
+        <label>比例 <input id="mix" type="range" min="0" max="100" value="50"><output id="mix-value">50%</output></label>
+        <label>底色 <select id="background"><option value="checker">棋盘格</option><option value="light">浅色</option><option value="dark">深色</option></select></label>
+        <button id="reset" type="button">显示所有图层</button>
+      </div>
+      <figure><div class="stage checker" id="stage"><canvas id="canvas" aria-label="效果原图与素材拼装对比"></canvas></div><figcaption id="caption"></figcaption></figure>
+      <details><summary>图层显隐与定位</summary><div id="layers" class="layer-list"></div></details>
+      <p class="hint">差异图用于定位偏差，不能换算成视觉完成度。静态拼装预览不证明游戏已接入。</p>
+    </section>
+    <section id="assets" aria-labelledby="assets-title">
+      <h2 id="assets-title">独立素材 <small id="asset-count"></small></h2>
+      <div class="toolbar"><label>搜索 <input id="search" type="search" placeholder="ID、文字、素材类型"></label><label>类型 <select id="filter"><option value="all">全部</option><option value="art">美术</option><option value="text">文字</option><option value="geometry">简单几何</option><option value="problem">待处理</option></select></label></div>
+      <div id="asset-grid" class="asset-grid"></div><p id="empty" hidden>没有匹配的素材。</p>
+    </section>
+    <section id="rounds" aria-labelledby="rounds-title"><h2 id="rounds-title">生成记录与对照证据</h2><div id="round-list" class="round-list"></div><div id="evidence" class="links"></div></section>
+    <details id="blockers"><summary>当前待处理项</summary><ul id="blocker-list"></ul></details>
+  </main>
+  <dialog id="asset-dialog" aria-labelledby="asset-title"><div class="dialog-head"><h2 id="asset-title"></h2><button id="close-dialog" type="button" aria-label="关闭素材详情">关闭</button></div><div id="asset-picture" class="asset-picture checker"></div><pre id="asset-info"></pre><div id="asset-links" class="links"></div></dialog>
+</body>
+</html>
