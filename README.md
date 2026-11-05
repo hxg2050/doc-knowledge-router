@@ -2,6 +2,8 @@
 
 面向 Codex、Claude Code、Cursor 等 agent 的文档知识路由 skill。它把项目文档当成图书馆来整理：入口、目录、索引、查找路径、权威归属和归档位置，而不是替业务文档写正文结论。
 
+仓库也提供独立的变更工作流与 Roguelike 机制／技能设计顾问，可按需单独安装。
+
 ## Installing
 
 安装整个仓库：
@@ -15,6 +17,7 @@ npx skills add https://github.com/hxg2050/doc-knowledge-router
 ```bash
 npx skills add https://github.com/hxg2050/doc-knowledge-router --skill "doc-knowledge-router"
 npx skills add https://github.com/hxg2050/doc-knowledge-router --skill "change-workflow"
+npx skills add https://github.com/hxg2050/doc-knowledge-router --skill "roguelike-design-advisor"
 ```
 
 也可以手动复制：
@@ -30,6 +33,7 @@ cp -R skills/doc-knowledge-router ~/.codex/skills/
 | --- | --- | --- | --- |
 | `doc-knowledge-router` | `doc-knowledge-router` | 管理项目文档的位置、分类、入口、索引、查找路径和权威归属 | stable |
 | `change-workflow` | `change-workflow` | 执行仓库变更时保持计划、测试、验证、续作记录和提交边界 | draft |
+| `roguelike-design-advisor` | `roguelike-design-advisor` | 参考 48 个机制与 24 个技能草案，提供游戏设计方向、组合建议与触发方式变体 | draft |
 
 ## Usage
 
@@ -51,7 +55,14 @@ Use $doc-knowledge-router to organize the docs directory and create a clear docs
 使用 $change-workflow 修复这个 bug，先补复现测试，再实现并运行相关验证。
 ```
 
-更多示例见 [examples/doc-knowledge-router.md](examples/doc-knowledge-router.md) 和 [examples/change-workflow.md](examples/change-workflow.md)。
+游戏设计示例：
+
+```text
+使用 $roguelike-design-advisor，为全被动攻击的 Roguelike 设计三个玩法不同的技能方向。
+参考核心机制即可，触发方式可以改，不需要详细数值。
+```
+
+更多示例见 [examples/doc-knowledge-router.md](examples/doc-knowledge-router.md)、[examples/change-workflow.md](examples/change-workflow.md) 和 [examples/roguelike-design-advisor.md](examples/roguelike-design-advisor.md)。
 
 ## Repository Layout
 
@@ -64,6 +75,13 @@ skills/
   doc-knowledge-router/
     SKILL.md
     agents/openai.yaml
+  roguelike-design-advisor/
+    SKILL.md
+    agents/openai.yaml
+    references/index.md
+    references/design-guidance.md
+    references/library.json
+    scripts/query_library.py
   llms.txt
 examples/
 scripts/
@@ -88,6 +106,7 @@ scripts/
 
 ```bash
 node scripts/validate-skills.mjs
+python skills/roguelike-design-advisor/scripts/query_library.py --check
 ```
 
 ## Contributing

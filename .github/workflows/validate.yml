@@ -15,3 +15,7 @@ jobs:
         with:
           node-version: "20"
       - run: node scripts/validate-skills.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python skills/roguelike-design-advisor/scripts/query_library.py --check

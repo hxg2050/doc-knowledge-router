@@ -1,0 +1,4 @@
+interface:
+  display_name: "Roguelike 机制与技能顾问"
+  short_description: "参考机制与技能资料，提供适合当前游戏的设计方向、组合建议和简洁方案"
+  default_prompt: "使用 $roguelike-design-advisor，根据我的游戏目标参考机制与技能资料，给出简洁的设计方向和方案；触发方式可以灵活调整。"
