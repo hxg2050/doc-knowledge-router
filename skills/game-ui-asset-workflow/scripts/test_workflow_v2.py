@@ -330,48 +330,51 @@ class WorkflowV2Tests(unittest.TestCase):
         self.assertEqual(result["visual_score"], 100)
         self.assertTrue(any("review region" in b for b in result["blockers"]))
 
-    def test_local_sheet_registers_and_reconstructs_at_final_scene_position(self):
+    def test_small_asset_registers_on_reference_sized_sheet_and_reconstructs_exactly(self):
         r, _ = self.registration_recipe()
-        r["canvas"] = [32, 24]
-        self.plan["assets"][2]["sheet_box"] = [3, 3, 26, 18]
+        r["canvas"] = self.plan["canvas"].copy()
         self.save_plan(); ui.load_plan(self.root)
         annotation = ui.annotate(self.root, self.plan, argparse.Namespace(round="r03"))
-        self.assertEqual(ui.rgba(ui.Path(annotation["annotation"])).size, (32, 24))
+        self.assertEqual(ui.rgba(ui.Path(annotation["annotation"])).size, (96, 64))
         register(self.root, self.plan, argparse.Namespace(round="r03", replace=False))
-        self.assertEqual(ui.rgba(self.root / r["image"]).size, (32, 24))
+        self.assertEqual(ui.rgba(self.root / r["image"]).size, (96, 64))
         self.baseline_review()
         self.assertEqual(ui.rgba(self.root / "assembly/reconstructed.png").tobytes(),
                          ui.rgba(self.root / "reference/mockup.png").tobytes())
+        self.assertEqual(ui.rgba(self.root / "assets/button.png").size, (26, 18))
         record = ui.read_json(self.root / "provenance/extraction.json")["button"]
-        self.assertEqual(record["normalized_size"], [32, 24])
-        r["canvas"] = [33, 24]; self.save_plan()
-        self.assertEqual(ui.status(self.root, self.plan)["affected_assets"], ["button"])
+        self.assertEqual(record["normalized_size"], [96, 64])
 
-    def test_direct_local_sheet_needs_no_registration_and_tracks_canvas_changes(self):
-        self.plan["rounds"][2]["canvas"] = [26, 18]
-        self.plan["assets"][2]["sheet_box"] = [0, 0, 26, 18]
-        self.layers[2].crop((28, 24, 54, 42)).save(self.root / "generated/r03.png")
+    def test_matching_sheet_needs_no_registration_and_preserves_raw_pixels(self):
+        self.plan["rounds"][2]["canvas"] = self.plan["canvas"].copy()
+        before = ui.sha(self.root / "generated/r03.png")
         self.save_plan(); ui.load_plan(self.root); self.extract_all()
         ui.compose(self.root, self.plan)
         self.assertEqual(ui.rgba(self.root / "assembly/reconstructed.png").tobytes(),
                          ui.rgba(self.root / "reference/mockup.png").tobytes())
-        self.plan["rounds"][2]["canvas"] = [27, 18]; self.save_plan()
-        self.assertEqual(ui.status(self.root, self.plan)["affected_assets"], ["button"])
+        self.assertEqual(ui.sha(self.root / "generated/r03.png"), before)
+        self.assertEqual(ui.rgba(self.root / "assets/button.png").size, (26, 18))
 
-    def test_oversized_complete_asset_is_clipped_only_in_final_assembly(self):
-        self.plan["rounds"][2]["canvas"] = [120, 100]
-        self.plan["assets"][2].update(size=[116, 96], sheet_box=[2, 2, 116, 96])
-        self.plan["instances"][2]["xy"] = [-20, -20]
-        self.plan["regions"][2]["box"] = [0, 0, 96, 64]
-        sheet = Image.new("RGBA", (120, 100))
-        ImageDraw.Draw(sheet).rounded_rectangle((4, 4, 115, 95), radius=3, fill=(180, 40, 30, 220))
-        sheet.save(self.root / "generated/r03.png")
-        self.save_plan(); ui.load_plan(self.root); self.extract_all(); ui.compose(self.root, self.plan)
-        asset = ui.rgba(self.root / "assets/button.png")
-        self.assertEqual(asset.size, (116, 96))
-        expected = self.layers[0].copy(); expected.alpha_composite(self.layers[1])
-        expected.alpha_composite(asset, (-20, -20))
-        self.assertEqual(ui.rgba(self.root / "assembly/reconstructed.png").tobytes(), expected.tobytes())
+    def test_smaller_and_larger_round_canvases_fail_before_writing_outputs(self):
+        r, _ = self.registration_recipe()
+        for schema in (1, 2):
+            self.plan["schema_version"] = schema
+            for size in ([26, 18], [120, 100], [64, 96]):
+                with self.subTest(schema=schema, size=size):
+                    r["canvas"] = size; self.save_plan()
+                    with self.assertRaisesRegex(ValueError, "canvas must match the reference resolution"):
+                        ui.load_plan(self.root)
+                    with self.assertRaisesRegex(ValueError, "canvas must match the reference resolution"):
+                        ui.annotate(self.root, self.plan, argparse.Namespace(round="r03"))
+                    with self.assertRaisesRegex(ValueError, "canvas must match the reference resolution"):
+                        register(self.root, self.plan, argparse.Namespace(round="r03", replace=False))
+        self.assertFalse((self.root / "annotations/r03.png").exists())
+        self.assertFalse((self.root / r["image"]).exists())
+        result = subprocess.run([sys.executable, "-B", ui.__file__, "extract", "--run", str(self.root), "--round", "r03"],
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertIn("canvas must match the reference resolution", result.stderr)
+        self.assertFalse((self.root / "assets/button.png").exists())
 
     def test_invalid_round_canvas_and_out_of_bounds_box_fail_before_processing(self):
         for size in ([0, 24], [32.5, 24], [20, 10]):
@@ -379,6 +382,11 @@ class WorkflowV2Tests(unittest.TestCase):
                 self.plan["rounds"][2]["canvas"] = size; self.save_plan()
                 with self.assertRaisesRegex(ValueError, "canvas"):
                     ui.load_plan(self.root)
+        self.plan["rounds"][2]["canvas"] = self.plan["canvas"].copy()
+        self.plan["assets"][2]["sheet_box"] = [80, 50, 26, 18]
+        self.save_plan()
+        with self.assertRaisesRegex(ValueError, "sheet_box"):
+            ui.load_plan(self.root)
 
 
 if __name__ == "__main__":

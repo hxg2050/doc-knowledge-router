@@ -1,6 +1,6 @@
 # 本地校正与切图
 
-固定最终界面和素材尺寸，标准化画布使用 `rounds[].canvas`（省略则继承 `plan.canvas`），分别保存原始返回图、标准化画布和独立 PNG。先测量再处理，不相信提示词会精确约束像素。所有矩形都是 `[x,y,width,height]`。
+固定最终界面和素材尺寸，所有大小素材的标准化画布均与原图实际像素宽高一致。`rounds[].canvas` 省略则继承 `plan.canvas`，显式填写必须与之相等。分别保存原始返回图、原图同尺寸的标准化画布和按裁框导出的独立 PNG。先测量再处理，不相信提示词会精确约束像素。所有矩形都是 `[x,y,width,height]`。
 
 ```text
 python SKILL_DIR/scripts/ui_assets.py inspect --run RUN_DIR --image generated/r02.png
@@ -51,7 +51,7 @@ python SKILL_DIR/scripts/ui_assets.py extract --run RUN_DIR --round r02
 
 ## 背景蒙版补绘
 
-原稿可见区域是 `base`，模型生成的补全图是 `source`，真实灰度蒙版 `mask` 中白色取补全图、黑色保留原稿；三者均与本轮标准画布同尺寸。整屏背景轮通常继承最终画布；使用局部背景轮时，base 和 mask 也必须先明确裁到该轮坐标空间。覆盖所有已提取物体及其阴影，避免残影与重复人物。
+原稿可见区域是 `base`，模型生成的补全图是 `source`，真实灰度蒙版 `mask` 中白色取补全图、黑色保留原稿；三者均须与原图及本轮标准画布同尺寸。局部补绘也保留整张原图画布，仅用蒙版限定修改范围。覆盖所有已提取物体及其阴影，避免残影与重复人物。
 
 ```json
 {"operations":[

@@ -25,7 +25,7 @@ RUN_DIR/
   history/                       # 替换前自动归档
 ```
 
-新任务使用 `schema_version: 2`，版本号约束结构与来源，不代表启用严格评分。快速模式可省略下例的 `regions` 和可选细节；进入严格评分前补齐区域并重新生成比较证据。以下示例同时展示局部轮次画布和严格区域：
+新任务使用 `schema_version: 2`，版本号约束结构与来源，不代表启用严格评分。快速模式可省略下例的 `regions` 和可选细节；进入严格评分前补齐区域并重新生成比较证据。以下示例的所有轮次均使用原图分辨率，并展示严格区域：
 
 ```json
 {
@@ -34,7 +34,7 @@ RUN_DIR/
   "canvas": [1280, 720],
   "rounds": [
     {"id": "r01", "raw_image": "generated/r01.png", "image": "generated/r01.png"},
-    {"id": "r02", "raw_image": "generated/r02.png", "image": "generated/r02-registered.png", "recipe": "recipes/r02.json", "canvas": [256, 96]}
+    {"id": "r02", "raw_image": "generated/r02.png", "image": "generated/r02-registered.png", "recipe": "recipes/r02.json", "canvas": [1280, 720]}
   ],
   "assets": [
     {"id": "background", "kind": "background", "strategy": "complete-occlusion",
@@ -42,7 +42,7 @@ RUN_DIR/
      "round": "r01", "sheet_box": [0, 0, 1280, 720], "file": "assets/background.png"},
     {"id": "start-plate", "kind": "button", "strategy": "remove-text",
      "required": true, "critical": true, "alpha": "transparent", "size": [240, 72],
-     "round": "r02", "sheet_box": [8, 12, 240, 72], "visible_box": [520, 600, 240, 60],
+     "round": "r02", "sheet_box": [520, 600, 240, 72], "visible_box": [520, 600, 240, 60],
      "pivot": [120, 36], "padding": [4, 4, 4, 4], "file": "assets/start-plate.png"},
     {"id": "start-label", "kind": "text", "strategy": "local",
      "required": true, "critical": true, "alpha": "transparent", "size": [120, 40],
@@ -65,8 +65,8 @@ RUN_DIR/
 ## 字段约定
 
 - 所有路径均相对任务目录，外部图片、字体和处理脚本先复制进来，保证可搬移。ID 用小写英文、数字、连字符或下划线，且各自列表内唯一。
-- 所有矩形是 `[x, y, width, height]`，不是 Pillow 的左右边界格式。最终布局坐标属于 `plan.canvas`；`sheet_box` 和 recipe 的目标坐标属于对应轮次画布。两者使用相同像素单位，但原点和画布大小可不同。
-- `rounds[].canvas` 可选，为正整数 `[width, height]`，省略时继承 `plan.canvas`。它约束标准化素材图，不约束模型原始返回尺寸，也不改变最终布局。
+- 所有矩形是 `[x, y, width, height]`，不是 Pillow 的左右边界格式。最终布局坐标属于 `plan.canvas`；`sheet_box` 和 recipe 的目标坐标属于对应轮次画布。两者均使用原图分辨率和左上角原点；轮次排布与最终实例位置分别记录。
+- `rounds[].canvas` 可选，为正整数 `[width, height]`，省略时继承 `plan.canvas`，显式填写必须与之完全相等。所有大小素材都使用原图同尺寸的标准化画布和标注图，不使用局部或扩大画布。生成时请求同样分辨率；模型实际返回尺寸不一致时，保留原始结果并校正到原图尺寸，不修改此契约。
 - `sheet_box` 是完整素材在**标准化轮次画布**中的裁切框，必须在画布内，含留边；`size` 必须等于其宽高。同轮框不得重叠，复用素材只生成一次。
 - `visible_box` 可选，描述原稿可见部分；不能代替补全后的完整框。`padding` 可选，顺序为左、上、右、下。
 - `instances[].xy` 永远是导出矩形的左上角，按 1:1 尺寸和 `z` 升序绘制；相同 `z` 保持清单顺序。实例可部分超出画布，不能完全不可见。
@@ -111,4 +111,4 @@ RUN_DIR/
 
 快速模式保留结构与来源字段，哈希由 register / extract 自动记录；不要求评分审核文件。`status` / `preview` 默认 quick，严格状态须显式 `--mode strict`；`verify` / `pack` 始终严格。旧命令若依赖 status 的评分字段，需追加 `--mode strict`。
 
-v1 清单仍可读取、切图、拼装。其来源规则维持兼容；仅在用户明确要求严格评分验收时，关键项沿用实例审核，原评分需按 `visual-v2` 重审。新任务不要继续产生 v1 清单。
+v1 清单仍可读取、切图、拼装。所有版本的轮次画布均须等于原图尺寸；旧清单若使用其他尺寸，先更新画布、裁框和对应素材图。其来源规则维持兼容；仅在用户明确要求严格评分验收时，关键项沿用实例审核，原评分需按 `visual-v2` 重审。新任务不要继续产生 v1 清单。

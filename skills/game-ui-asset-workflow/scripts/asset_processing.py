@@ -12,8 +12,11 @@ def strategy(asset):
 
 
 def sheet_canvas(plan, round_info):
-    """Registered sheet pixels; legacy rounds inherit the final scene canvas."""
-    return round_info.get("canvas", plan["canvas"])
+    """Every registered sheet uses the reference resolution, regardless of asset size."""
+    canvas = round_info.get("canvas", plan["canvas"])
+    if canvas != plan["canvas"]:
+        raise ValueError(f"Round canvas must match the reference resolution: {round_info['id']}")
+    return canvas
 
 
 def recipe_inputs(recipe):

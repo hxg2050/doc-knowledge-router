@@ -1,4 +1,4 @@
-# 独立画布与分轮生图
+# 原图尺寸画布与分轮生图
 
 默认快速模式：只完成首版必需的取材轮次，生成返回后及时校正、切图和拼装；不为墨色、纹理或轻微形状差异追加精修轮。首版可用后的修改由用户提出。
 
@@ -8,7 +8,7 @@
 
 完整原稿可直接裁切的素材先保留，不为统一走生图而重绘。去文字与补遮挡轮明确只修指定部分；复杂素材仍由生图取得，不能用脚本重画风格化美术冒充提取。
 
-先选轮次标准画布 S×T：默认沿用最终界面 W×H，也可在 `rounds[].canvas` 声明局部或更大画布。整体图只约束视觉；独立标注图约束素材排布。完整素材的导出尺寸不因换画布改变，最终位置仍来自 instances。
+读取原图实际尺寸 W×H，所有轮次标准画布和标注图统一使用 W×H，无论素材大小；`rounds[].canvas` 如填写必须等于 `plan.canvas`。整体图约束外观和原稿像素比例，轮次标注图标出要提取素材的完整裁框与留边。不要为小图标缩小画布，也不要为大人物扩大画布或改变素材比例；最终位置仍来自 instances。
 
 按实际清单改写提示词：
 
@@ -16,9 +16,10 @@
 Task: separate the specified game UI assets from the selected screen reference.
 Image 1 is the visual reference: preserve style, shapes, materials, colors,
 perspective, proportions and visible detail. Image 2 is a coordinate guide on
-one S by T asset-sheet canvas, separate from the final screen layout. Its rectangles and labels are annotations only.
+one W by H asset-sheet canvas with exactly the same pixel dimensions as Image 1.
+Its rectangles and labels are annotations only; final screen positions are recorded separately.
 
-Output an S by T RGBA canvas with a truly transparent background.
+Output a W by H RGBA canvas with a truly transparent background, regardless of asset size.
 Include ONLY these complete assets at their planned pixel bounds:
 - ASSET_ID: x=X, y=Y, width=WIDTH, height=HEIGHT; appearance; hidden parts to restore.
 
@@ -42,7 +43,7 @@ This is a reusable asset pass. Preserve the chosen design.
 
 1. 检查实际尺寸、Alpha 和数量。完全不透明的白底/棋盘格不是透明输出；不能靠文件扩展名推断。
 2. 测量每个物体实际范围。模型可能返回差 1px 的画布、把人物放大或把按钮移位，不直接按固定网格硬切。
-3. 原始结果保持不动；需要时建立 recipe，本地等比校正到该轮声明的 S×T 标准画布。人物和图标不做非等比缩放；九宫格仅限适用的 UI 底板。
+3. 原始结果保持不动；需要时建立 recipe，本地等比校正到原图 W×H 标准画布。不能按模型返回尺寸改小或扩大轮次画布。人物和图标不做非等比缩放；九宫格仅限适用的 UI 底板。
 4. 轮廓/比例偏差记录为已知差异，不靠改清单或粗阈值掩饰；隐藏部分缺失、多个对象粘连或 Alpha 错误等导致无法独立使用时，才重做相关素材。
 5. 查看深浅底上的细线、墨迹、发丝与半透明边缘。发现意外截断先扩大来源裁切，再调整注册；留边变化须同步坐标和审核区域。
 
